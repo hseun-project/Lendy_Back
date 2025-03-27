@@ -10,14 +10,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true
       },
-      userId: {
-        type: DataTypes.STRING(20),
-        allowNull: false,
-        references: {
-          model: "User",
-          key: "userId"
-        }
-      },
       email: {
         type: DataTypes.STRING(30),
         allowNull: false,

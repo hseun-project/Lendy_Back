@@ -30,6 +30,14 @@ module.exports = (sequelize, DataTypes) => {
       personNumber: {
         type: DataTypes.STRING(7),
         allowNull: false
+      },
+      emailId: {
+        type: DataTypes.BIGINT,
+        allowNull: false,
+        references: {
+          model: "Email",
+          key: "emailId"
+        }
       }
     },
     {

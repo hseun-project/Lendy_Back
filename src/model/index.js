@@ -9,6 +9,7 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 db.User = require("./user")(sequelize, Sequelize);
+db.Email = require("./email")(sequelize, Sequelize);
 db.ApplyLoan = require("./applyLoans")(sequelize, Sequelize);
 db.Loans = require("./loans")(sequelize, Sequelize);
 db.Repayment = require("./repayment")(sequelize, Sequelize);
