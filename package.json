@@ -7,6 +7,10 @@
     "mysql2": "^3.13.0",
     "sequelize": "^6.37.6"
   },
+  "prettier": {
+    "printWidth": 160,
+    "trailingComma": "none"
+  },
   "scripts": {
     "start": "cd src && node app.js",
     "dev": "cd src && nodemon app.js"
