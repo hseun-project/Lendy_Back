@@ -12,7 +12,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       debtId: {
         type: DataTypes.STRING(20),
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: "User",
+          key: "userId"
+        }
       },
       loanType: {
         type: DataTypes.ENUM("PRIVATE_LOAN", "PUBLIC_LOAN"),
@@ -41,7 +45,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       bondId: {
         type: DataTypes.STRING(20),
-        allowNull: true
+        allowNull: true,
+        references: {
+          model: "User",
+          key: "userId"
+        }
       }
     },
     {
