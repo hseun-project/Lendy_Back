@@ -27,11 +27,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true
       },
-      mail: {
-        type: DataTypes.STRING(30),
-        allowNull: false,
-        unique: true
-      },
       personNumber: {
         type: DataTypes.STRING(7),
         allowNull: false
