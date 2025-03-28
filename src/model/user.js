@@ -31,13 +31,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(7),
         allowNull: false
       },
-      emailId: {
-        type: DataTypes.BIGINT,
+      email: {
+        type: DataTypes.STRING(30),
         allowNull: false,
-        references: {
-          model: "Email",
-          key: "emailId"
-        }
+        unique: true
       }
     },
     {
