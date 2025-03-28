@@ -8,10 +8,21 @@ const sequelize = new Sequelize({ ...config, sync: false });
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.User = require("./user")(sequelize, Sequelize);
-db.Email = require("./email")(sequelize, Sequelize);
-db.ApplyLoan = require("./applyLoans")(sequelize, Sequelize);
-db.Loans = require("./loans")(sequelize, Sequelize);
-db.Repayment = require("./repayment")(sequelize, Sequelize);
+sequelize
+  .authenticate()
+  .then(() => {
+    db.User = require("./user")(sequelize, Sequelize);
+    db.ApplyLoan = require("./applyLoans")(sequelize, Sequelize);
+    db.Loans = require("./loans")(sequelize, Sequelize);
+    db.Repayment = require("./repayment")(sequelize, Sequelize);
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+
+// db.User = require("./user")(sequelize, Sequelize);
+// db.ApplyLoan = require("./applyLoans")(sequelize, Sequelize);
+// db.Loans = require("./loans")(sequelize, Sequelize);
+// db.Repayment = require("./repayment")(sequelize, Sequelize);
 
 module.exports = db;
