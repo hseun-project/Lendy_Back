@@ -1,57 +1,72 @@
-const sequelize = require("sequelize");
+const Sequelize = require("sequelize");
 
-module.exports = (sequelize, DataTypes) => {
-  return sequelize.define(
-    "Loans",
-    {
-      loanId: {
-        type: DataTypes.BIGINT,
-        allowNull: false,
-        primaryKey: true,
-        autoIncrement: true
-      },
-      debtId: {
-        type: DataTypes.STRING(20),
-        allowNull: false,
-        references: {
-          model: "User",
-          key: "userId"
+class Loans extends Sequelize.Model {
+  static initiate(sequelize) {
+    super.init(
+      {
+        loanId: {
+          type: Sequelize.BIGINT,
+          allowNull: false,
+          primaryKey: true,
+          autoIncrement: true
+        },
+        debtId: {
+          type: Sequelize.STRING(20),
+          allowNull: false
+        },
+        bondId: {
+          type: Sequelize.STRING(20),
+          allowNull: false
+        },
+        money: {
+          type: Sequelize.INTEGER,
+          allowNull: false
+        },
+        interest: {
+          type: Sequelize.FLOAT(4, 2),
+          allowNull: false
+        },
+        duringType: {
+          type: Sequelize.ENUM("DAY", "MONTH"),
+          allowNull: false
+        },
+        during: {
+          type: Sequelize.INTEGER,
+          allowNull: false
+        },
+        startDate: {
+          type: Sequelize.DATE,
+          allowNull: false,
+          defaultValue: Sequelize.NOW
         }
       },
-      bondId: {
-        type: DataTypes.STRING(20),
-        allowNull: false,
-        references: {
-          model: "User",
-          key: "userId"
-        }
-      },
-      money: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-      },
-      interest: {
-        type: DataTypes.FLOAT(4, 2),
-        allowNull: false
-      },
-      duringType: {
-        type: DataTypes.ENUM("DAY", "MONTH"),
-        allowNull: false
-      },
-      during: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-      },
-      startDate: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        default: DataTypes.NOW
+      {
+        sequelize,
+        timestamps: false,
+        underscored: false,
+        modelName: "Loans",
+        tableName: "Loans",
+        paranoid: false,
+        charset: "utf8",
+        getterMethods: "utf8_general_ci"
       }
-    },
-    {
-      sequelize,
-      modelName: "Loans",
-      timestamps: false
-    }
-  );
-};
+    );
+  }
+
+  static associate(db) {
+    Loans.belongsTo(db.User, {
+      foreignKey: "debtId",
+      as: "debtLoans"
+    });
+    Loans.belongsTo(db.User, {
+      foreignKey: "bondId",
+      as: "bondLoans"
+    });
+    Loans.hasMany(db.Repayment, {
+      foreignKey: "loanId",
+      sourceKey: "loanId"
+    });
+  }
+}
+
+module.exports = Loans;
