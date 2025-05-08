@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LoanType {
+  PRIVATE_LOAN
+  PUBLIC_LOAN
+}
+
+enum DuringType {
+  DAY
+  MONTH
+}
+
+enum ApplyLoanState {
+  PENDING
+  APPROVAL
+  REJECTED
+}
+
+model User {
+  id          BigInt      @id @default(autoincrement()) @db.BigInt
+  email       String      @db.VarChar(20)
+  password    String
+  creditScore Int         @default(500)
+  state       String?     @db.Char(32) @unique
+
+  userDetail  UserDetail?
+  bank        Bank[]
+  debtApply   ApplyLoan[] @relation("DebtApply")
+  bondApply   ApplyLoan[] @relation("BondApply")
+  debtLoan    Loan[]      @relation("DebtLoan")
+  bondLoan    Loan[]      @relation("BondLoan")
+}
+
+model UserDetail {
+  id        BigInt  @id
+  userCode  String
+  userName  String? @db.VarChar(6)
+  userSeqNo String? @db.VarChar(10)
+  apiTranId String? @db.VarChar(40)
+
+  user      User    @relation(fields: [id], references: [id])
+}
+
+model Bank {
+  fintechUseNum    String  @id
+  userId           BigInt  @db.BigInt
+  bankName         String  @db.VarChar(20)
+  bankNumber       String? @db.VarChar(16)
+  alias            String  @db.VarChar(50)
+  bankNumberMasked String  @db.VarChar(20)
+  ownerName        String  @db.VarChar(20)
+
+  user             User    @relation(fields: [userId], references: [id])
+}
+
+model ApplyLoan {
+  id         BigInt         @id @default(autoincrement()) @db.BigInt
+  debtId     BigInt         @db.BigInt
+  bondId     BigInt?        @db.BigInt
+  loanType   LoanType
+  money      Int
+  interest   Decimal        @db.Decimal(4, 2)
+  duringType DuringType
+  during     Int
+  state      ApplyLoanState @default(PENDING)
+
+  debtApply  User           @relation("DebtApply", fields: [debtId], references: [id])
+  bondApply  User?          @relation("BondApply", fields: [bondId], references: [id])
+}
+
+model Loan {
+  id         BigInt   @id @default(autoincrement()) @db.BigInt
+  debtId     BigInt   @db.BigInt
+  bondId     BigInt   @db.BigInt
+  money      Int
+  repay      Int      @default(0)
+  interest   Decimal  @db.Decimal(4, 2)
+  duringType DuringType
+  during     Int
+  startDate  DateTime @db.Date @default(now())
+
+  debtLoan   User     @relation("DebtLoan", fields: [debtId], references: [id])
+  bondLoan   User     @relation("BondLoan", fields: [bondId], references: [id])
+}
