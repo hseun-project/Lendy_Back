@@ -21,4 +21,7 @@ app.use('/', router);
 
 app.listen(port, () => {
   console.log(`Server is running on ${port}`);
-});
+}).on('error', (err) => {
+  console.error(`Failed to start server : ${err}`);
+  process.exit(1)
+})
