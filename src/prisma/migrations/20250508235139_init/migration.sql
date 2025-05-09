@@ -10,7 +10,7 @@ CREATE TYPE "ApplyLoanState" AS ENUM ('PENDING', 'APPROVAL', 'REJECTED');
 -- CreateTable
 CREATE TABLE "User" (
     "id" BIGSERIAL NOT NULL,
-    "email" VARCHAR(20) NOT NULL,
+    "email" VARCHAR(32) NOT NULL,
     "password" TEXT NOT NULL,
     "creditScore" INTEGER NOT NULL DEFAULT 500,
     "state" CHAR(32),
@@ -71,6 +71,9 @@ CREATE TABLE "Loan" (
 
     CONSTRAINT "Loan_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_state_key" ON "User"("state");
