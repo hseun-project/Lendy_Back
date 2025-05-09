@@ -4,8 +4,9 @@ import bcrypt from 'bcrypt';
 import redis from '../../config/redis';
 import { LoginResponse, SignRequest } from '../../types/auth';
 import { generateToken } from './token';
+import crypto from 'crypto';
 
-export const login = async (req: Request<{}, {}, SignRequest>, res: Response<LoginResponse | object>) => {
+export const login = async (req: Request<{}, {}, SignRequest>, res: Response<LoginResponse | { message: string }>) => {
   try {
     const { email, password } = req.body;
 
@@ -21,10 +22,10 @@ export const login = async (req: Request<{}, {}, SignRequest>, res: Response<Log
       });
     }
 
-    const accessToken = await generateToken(thisUser.id.toString(), true);
-    const refreshToken = await generateToken(Date.now().toString(), false);
+    const accessToken = generateToken(thisUser.id.toString(), true);
+    const refreshToken = generateToken(crypto.randomUUID(), false);
 
-    await redis.set(thisUser.id.toString(), accessToken, 'EX', 7200);
+    await redis.set(thisUser.id.toString(), accessToken, 'EX', 3600);
     await redis.set(refreshToken, thisUser.id.toString(), 'EX', 604800);
 
     return res.status(200).json({
