@@ -1,6 +1,7 @@
+import { isEmail } from 'validator';
+
 export const checkMailRegex = (email: string): boolean => {
-  const emailPattern = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
-  return email.length <= 32 && emailPattern.test(email);
+  return email.length <= 32 && isEmail(email);
 };
 
 export const checkPasswordRegex = (password: string): boolean => {
