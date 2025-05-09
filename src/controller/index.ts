@@ -1,4 +1,5 @@
 import express from 'express';
+import auth from './auth';
 
 const app = express();
 
@@ -7,5 +8,6 @@ app.get('/health', (_, res) => {
     message: 'OK'
   });
 });
+app.use('/auth', auth);
 
 export default app;
