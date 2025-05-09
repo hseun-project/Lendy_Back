@@ -1,9 +1,10 @@
 import express, { Request, Response } from 'express';
 import auth from '../service/auth';
+import { limit } from '../middleware/limit';
 
 const app = express();
 
-app.post('/signup', (req: Request, res: Response) => {
+app.post('/signup', limit, (req: Request, res: Response) => {
   auth.signUp(req, res);
 });
 
