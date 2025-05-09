@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import { prisma } from '../../config/prisma';
 import { checkMailRegex, checkPasswordRegex } from '../../utils/regex';
 import bcrypt from 'bcrypt';
-import { SignUpRequest } from '../../types/auth';
+import { SignRequest } from '../../types/auth';
 
-export const signUp = async (req: Request<{}, {}, SignUpRequest>, res: Response) => {
+export const signUp = async (req: Request<{}, {}, SignRequest>, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
