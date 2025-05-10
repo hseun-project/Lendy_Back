@@ -5,8 +5,9 @@ import redis from '../../config/redis';
 import { LoginResponse, SignRequest } from '../../types/auth';
 import { generateToken } from './token';
 import crypto from 'crypto';
+import { BasicResponse } from '../../types';
 
-export const login = async (req: Request<{}, {}, SignRequest>, res: Response<LoginResponse | { message: string }>) => {
+export const login = async (req: Request<{}, {}, SignRequest>, res: Response<LoginResponse | BasicResponse>) => {
   try {
     const { email, password } = req.body;
 
@@ -17,7 +18,7 @@ export const login = async (req: Request<{}, {}, SignRequest>, res: Response<Log
       });
     }
     if (!(await bcrypt.compare(password, thisUser.password))) {
-      return res.status(409).json({
+      return res.status(401).json({
         message: '비밀번호 불일치'
       });
     }
@@ -29,8 +30,8 @@ export const login = async (req: Request<{}, {}, SignRequest>, res: Response<Log
     await redis.set(refreshToken, thisUser.id.toString(), 'EX', 604800);
 
     return res.status(200).json({
-      accessToken: accessToken,
-      refreshToken: refreshToken
+      accessToken,
+      refreshToken
     });
   } catch (err) {
     console.error(err);
