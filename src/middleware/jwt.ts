@@ -1,9 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-
-interface AuthenticatedRequest extends Request {
-  payload?: string | JwtPayload;
-}
+import { Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import { AuthenticatedRequest, JwtPayloadData } from '../types/auth';
 
 export const verifyJWT = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
@@ -22,7 +19,7 @@ export const verifyJWT = (req: AuthenticatedRequest, res: Response, next: NextFu
       return;
     }
     const token = authorization.split(' ')[1];
-    const decoded = jwt.verify(token, privateKey);
+    const decoded = jwt.verify(token, privateKey) as JwtPayloadData;
     req.payload = decoded;
 
     next();

@@ -1,26 +1,17 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import redis from '../../config/redis';
-import jwt from 'jsonwebtoken';
 import { BasicResponse } from '../../types';
+import { AuthenticatedRequest } from '../../types/auth';
 
-export const logout = async (req: Request, res: Response<BasicResponse>) => {
+export const logout = async (req: AuthenticatedRequest, res: Response<BasicResponse>) => {
   try {
-    const authorization = req.get('Authorization');
-    if (!authorization) {
+    const payload = req.payload;
+    if (!payload) {
       return res.status(400).json({
-        message: '확인할 수 없는 토큰'
+        message: '토큰 검증 실패'
       });
     }
-    const token = authorization.split(' ')[1];
-    const privateKey = process.env.PRIVATE_KEY;
-    if (!privateKey) {
-      return res.status(500).json({
-        message: 'private key is not defined'
-      });
-    }
-
-    const decoded = jwt.verify(token, privateKey) as { id: string };
-    const userId = decoded.id;
+    const userId = payload.id;
     const keys = await redis.keys('refresh *');
     for (const key of keys) {
       const storedUserId = await redis.get(key);
@@ -29,7 +20,7 @@ export const logout = async (req: Request, res: Response<BasicResponse>) => {
         break;
       }
     }
-    await redis.del(userId);
+    await redis.del(userId.toString());
 
     return res.status(200).json({
       message: '로그아웃 성공'
