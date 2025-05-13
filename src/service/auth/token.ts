@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { BasicResponse } from '../../types';
 import { AuthenticatedRequest, TokenResponse } from '../../types/auth';
 import { signJWT } from '../../utils/jwt';
