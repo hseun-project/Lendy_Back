@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 import { prisma } from '../../config/prisma';
 import bcrypt from 'bcrypt';
 import redis from '../../config/redis';
-import { LoginResponse, SignRequest } from '../../types/auth';
+import { TokenResponse, SignRequest } from '../../types/auth';
 import { generateToken } from './token';
 import crypto from 'crypto';
 import { BasicResponse } from '../../types';
 
-export const login = async (req: Request<{}, {}, SignRequest>, res: Response<LoginResponse | BasicResponse>) => {
+export const login = async (req: Request<{}, {}, SignRequest>, res: Response<TokenResponse | BasicResponse>) => {
   try {
     const { email, password } = req.body;
 
@@ -27,7 +27,7 @@ export const login = async (req: Request<{}, {}, SignRequest>, res: Response<Log
     const refreshToken = generateToken(crypto.randomUUID(), false);
 
     await redis.set(thisUser.id.toString(), accessToken, 'EX', 3600);
-    await redis.set(refreshToken, thisUser.id.toString(), 'EX', 604800);
+    await redis.set(`refresh ${refreshToken}`, thisUser.id.toString(), 'EX', 604800);
 
     return res.status(200).json({
       accessToken,
