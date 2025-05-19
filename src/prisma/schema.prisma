@@ -40,7 +40,7 @@ model User {
 
 model UserDetail {
   id        BigInt  @id
-  userCode  String
+  userCode  String  @unique
   userName  String? @db.VarChar(6)
   userSeqNo String? @db.VarChar(10)
   apiTranId String? @db.VarChar(40)
