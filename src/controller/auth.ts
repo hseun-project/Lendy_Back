@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import auth from '../service/auth';
-import { getApiLimit, postApiLimit } from '../middleware/limit';
+import { postApiLimit } from '../middleware/limit';
 import { verifyJWT } from '../middleware/jwt';
 
 const app = express();
@@ -16,10 +16,6 @@ app.post('/refresh', postApiLimit, verifyJWT, (req: Request, res: Response) => {
 });
 app.post('/logout', postApiLimit, verifyJWT, (req: Request, res: Response) => {
   auth.logout(req, res);
-});
-
-app.get('/identification', getApiLimit, (req: Request, res: Response) => {
-  auth.identificationUrl(req, res);
 });
 
 export default app;
