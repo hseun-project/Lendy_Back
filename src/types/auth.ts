@@ -19,3 +19,7 @@ export interface JwtPayloadData {
   type: 'access' | 'refresh';
   iat: number;
 }
+
+export interface IdentificationUrlResponse {
+  url: string;
+}
