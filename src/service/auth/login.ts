@@ -10,6 +10,8 @@ import { generateToken } from '../../utils/jwt';
 export const login = async (req: Request<{}, {}, SignRequest>, res: Response<TokenResponse | BasicResponse>) => {
   try {
     const { email, password } = req.body;
+    const accessTokenSecond = process.env.ACCESS_TOKEN_SECOND || 3600;
+    const refreshTokenSecond = process.env.REFRESH_TOKEN_SECOND || 6048000;
 
     const thisUser = await prisma.user.findUnique({ where: { email } });
     if (!thisUser) {
@@ -23,11 +25,11 @@ export const login = async (req: Request<{}, {}, SignRequest>, res: Response<Tok
       });
     }
 
-    const accessToken = generateToken(thisUser.id.toString(), true);
-    const refreshToken = generateToken(crypto.randomUUID(), false);
+    const accessToken = generateToken(thisUser.id.toString(), crypto.randomUUID(), true);
+    const refreshToken = generateToken(crypto.randomUUID(), thisUser.id.toString(), false);
 
-    await redis.set(thisUser.id.toString(), accessToken, 'EX', 3600);
-    await redis.set(`refresh ${refreshToken}`, thisUser.id.toString(), 'EX', 604800);
+    await redis.set(`access ${thisUser.id}`, accessToken, 'EX', accessTokenSecond);
+    await redis.set(`refresh ${thisUser.id}`, refreshToken, 'EX', refreshTokenSecond);
 
     return res.status(200).json({
       accessToken,

@@ -16,6 +16,7 @@ export interface AuthenticatedRequest extends Request {
 
 export interface JwtPayloadData {
   id: string;
+  sub: string;
   type: 'access' | 'refresh';
   iat: number;
 }

@@ -9,10 +9,11 @@ const signJWT = (payload: object, expiresIn: ms.StringValue): string => {
   return jwt.sign(payload, privateKey, { algorithm: 'HS256', expiresIn: expiresIn });
 };
 
-export const generateToken = (id: string, isAccess: boolean) => {
+export const generateToken = (id: string, sub: string, isAccess: boolean) => {
   const token = signJWT(
     {
       id,
+      sub,
       type: isAccess ? 'access' : 'refresh',
       iat: Math.floor(Date.now() / 1000)
     },
