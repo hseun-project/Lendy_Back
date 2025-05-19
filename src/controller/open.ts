@@ -4,6 +4,11 @@ import open from '../service/open';
 
 const app = express();
 
-app.get('/identification', getApiLimit, (req: Request, res: Response) => {
+app.get('/identification/:email', getApiLimit, (req: Request, res: Response) => {
   open.identificationUrl(req, res);
 });
+app.get('/', getApiLimit, (req: Request, res: Response) => {
+  open.openCode(req, res);
+});
+
+export default app;
