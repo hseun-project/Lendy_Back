@@ -3,9 +3,9 @@ import { prisma } from '../../config/prisma';
 import bcrypt from 'bcrypt';
 import redis from '../../config/redis';
 import { TokenResponse, SignRequest } from '../../types/auth';
-import { generateToken } from './token';
 import crypto from 'crypto';
 import { BasicResponse } from '../../types';
+import { generateToken } from '../../utils/jwt';
 
 export const login = async (req: Request<{}, {}, SignRequest>, res: Response<TokenResponse | BasicResponse>) => {
   try {
