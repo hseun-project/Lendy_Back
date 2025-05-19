@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../config/prisma';
 import { BasicResponse } from '../../types';
+import { userToken } from './token';
 
 export const openCode = async (req: Request, res: Response<BasicResponse>) => {
   const { code, state } = req.query;
@@ -30,6 +31,8 @@ export const openCode = async (req: Request, res: Response<BasicResponse>) => {
         userCode: strCode
       }
     });
+
+    await userToken(strCode);
 
     return res.status(200).json({
       message: '본인 인증 완료'
