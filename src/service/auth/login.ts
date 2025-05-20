@@ -10,8 +10,8 @@ import { generateToken } from '../../utils/jwt';
 export const login = async (req: Request<{}, {}, SignRequest>, res: Response<TokenResponse | BasicResponse>) => {
   try {
     const { email, password } = req.body;
-    const accessTokenSecond = process.env.ACCESS_TOKEN_SECOND || 3600;
-    const refreshTokenSecond = process.env.REFRESH_TOKEN_SECOND || 6048000;
+    const accessTokenSecond = Number(process.env.ACCESS_TOKEN_SECOND) || 3600;
+    const refreshTokenSecond = Number(process.env.REFRESH_TOKEN_SECOND) || 6048000;
 
     const thisUser = await prisma.user.findUnique({ where: { email } });
     if (!thisUser) {
