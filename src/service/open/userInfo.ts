@@ -2,6 +2,7 @@ import axios from 'axios';
 import { prisma } from '../../config/prisma';
 import redis from '../../config/redis';
 import { BankData } from '../../types/open';
+import { REDIS_KEY } from '../../types';
 
 export const userInfo = async (code: string) => {
   const testUrl = process.env.OPEN_API_TEST_URL;
@@ -14,7 +15,10 @@ export const userInfo = async (code: string) => {
       throw Error('userDetail is not Found');
     }
     const url = `${testUrl}/v2.0/user/me?user_seq_no=${userDetail?.userSeqNo}`;
-    const token = await redis.get(`openAccess ${userDetail.id}`);
+    const token = await redis.get(`${REDIS_KEY.OPEN_ACCESS_TOKEN} ${userDetail.id}`);
+    if (!token) {
+      throw Error('토큰 없음');
+    }
 
     const res = await axios.get(url, {
       headers: {
@@ -44,18 +48,6 @@ export const userInfo = async (code: string) => {
       })),
       skipDuplicates: true
     });
-    for (const bankData of resList) {
-      await prisma.bank.create({
-        data: {
-          fintechUseNum: bankData.fintech_use_num,
-          user: { connect: { id: userDetail.id } },
-          bankName: bankData.bank_name,
-          alias: bankData.account_alias,
-          bankNumberMasked: bankData.account_num_masked,
-          ownerName: bankData.account_holder_type
-        }
-      });
-    }
   } catch (err) {
     throw err;
   }
