@@ -2,6 +2,7 @@ import { prisma } from '../../config/prisma';
 import redis from '../../config/redis';
 import axios from 'axios';
 import qs from 'qs';
+import { REDIS_KEY } from '../../types';
 
 const clientId = process.env.OPEN_API_CLIENT_ID;
 const clientSecret = process.env.OPEN_API_SECRET_KEY;
@@ -35,8 +36,8 @@ export const userToken = async (userCode: string) => {
       data: { userSeqNo: user_seq_no }
     });
 
-    await redis.set(`openAccess ${userDetail.id}`, access_token, 'EX', expires_in);
-    await redis.set(`openRefresh ${userDetail.id}`, refresh_token, 'EX', expires_in + 10000);
+    await redis.set(`${REDIS_KEY.OPEN_ACCESS_TOKEN} ${userDetail.id}`, access_token, 'EX', expires_in);
+    await redis.set(`${REDIS_KEY.OPEN_REFRESH_TOKEN} ${userDetail.id}`, refresh_token, 'EX', expires_in + 10000);
   } catch (err) {
     throw Error('userToken failed');
   }
@@ -91,8 +92,8 @@ export const refresh = async (refreshToken: string) => {
       throw Error('UserDetail is not Found');
     }
 
-    await redis.set(`openAccess ${userDetail.id}`, access_token, 'EX', expires_in);
-    await redis.set(`openRefresh ${userDetail.id}`, refresh_token, 'EX', expires_in + 10000);
+    await redis.set(`${REDIS_KEY.OPEN_ACCESS_TOKEN} ${userDetail.id}`, access_token, 'EX', expires_in);
+    await redis.set(`${REDIS_KEY.OPEN_REFRESH_TOKEN} ${userDetail.id}`, refresh_token, 'EX', expires_in + 10000);
   } catch (err) {
     throw Error('refresh Failed');
   }

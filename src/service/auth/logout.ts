@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import redis from '../../config/redis';
-import { BasicResponse } from '../../types';
+import { BasicResponse, REDIS_KEY } from '../../types';
 import { AuthenticatedRequest } from '../../types/auth';
 
 export const logout = async (req: AuthenticatedRequest, res: Response<BasicResponse>) => {
@@ -12,7 +12,7 @@ export const logout = async (req: AuthenticatedRequest, res: Response<BasicRespo
       });
     }
     const userId = payload.id;
-    await redis.del(`refresh ${userId}`);
+    await redis.del(`${REDIS_KEY.REFRESH_TOKEN} ${userId}`);
     await redis.del(userId);
 
     return res.status(200).json({

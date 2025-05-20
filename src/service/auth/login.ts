@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import redis from '../../config/redis';
 import { TokenResponse, SignRequest } from '../../types/auth';
 import crypto from 'crypto';
-import { BasicResponse } from '../../types';
+import { BasicResponse, REDIS_KEY } from '../../types';
 import { generateToken } from '../../utils/jwt';
 
 export const login = async (req: Request<{}, {}, SignRequest>, res: Response<TokenResponse | BasicResponse>) => {
@@ -28,8 +28,8 @@ export const login = async (req: Request<{}, {}, SignRequest>, res: Response<Tok
     const accessToken = generateToken(thisUser.id.toString(), crypto.randomUUID(), true);
     const refreshToken = generateToken(crypto.randomUUID(), thisUser.id.toString(), false);
 
-    await redis.set(`access ${thisUser.id}`, accessToken, 'EX', accessTokenSecond);
-    await redis.set(`refresh ${thisUser.id}`, refreshToken, 'EX', refreshTokenSecond);
+    await redis.set(`${REDIS_KEY.ACCESS_TOKEN} ${thisUser.id}`, accessToken, 'EX', accessTokenSecond);
+    await redis.set(`${REDIS_KEY.REFRESH_TOKEN} ${thisUser.id}`, refreshToken, 'EX', refreshTokenSecond);
 
     return res.status(200).json({
       accessToken,

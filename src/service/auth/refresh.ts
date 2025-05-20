@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { BasicResponse } from '../../types';
+import { BasicResponse, REDIS_KEY } from '../../types';
 import { AuthenticatedRequest, TokenResponse } from '../../types/auth';
 import redis from '../../config/redis';
 import { generateToken } from '../../utils/jwt';
@@ -37,7 +37,7 @@ export const refresh = async (req: AuthenticatedRequest, res: Response<TokenResp
     const token = authorization.split(' ')[1];
 
     const accessToken = await generateToken(userId, crypto.randomUUID(), true);
-    await redis.set(`access ${userId}`, accessToken, 'EX', accessTokenSecond);
+    await redis.set(`${REDIS_KEY.ACCESS_TOKEN} ${userId}`, accessToken, 'EX', accessTokenSecond);
 
     return res.status(200).json({
       accessToken: accessToken,
