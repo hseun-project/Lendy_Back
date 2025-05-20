@@ -7,10 +7,18 @@ import { REDIS_KEY } from '../../types';
 const clientId = process.env.OPEN_API_CLIENT_ID;
 const clientSecret = process.env.OPEN_API_SECRET_KEY;
 const openApiTestUrl = process.env.OPEN_API_TEST_URL;
+if (!clientId || !clientSecret || !openApiTestUrl) {
+  throw Error('env 변수 불러오기 실패');
+}
+
 const tokenApiUrl = `${openApiTestUrl}/oauth/2.0/token`;
 
 export const userToken = async (userCode: string) => {
   const redirectionUrl = process.env.OPEN_API_REDIRECTION_URL;
+  if (!redirectionUrl) {
+    throw Error('env 변수 불러오기 실패');
+  }
+
   try {
     const res = await axios.post(
       tokenApiUrl,
