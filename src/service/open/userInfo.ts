@@ -2,7 +2,6 @@ import axios from 'axios';
 import { prisma } from '../../config/prisma';
 import redis from '../../config/redis';
 import { BankData } from '../../types/open';
-import { connect } from 'http2';
 
 export const userInfo = async (code: string) => {
   const testUrl = process.env.OPEN_API_TEST_URL;
@@ -34,6 +33,17 @@ export const userInfo = async (code: string) => {
 
     const resList: BankData[] = res_list;
 
+    await prisma.bank.createMany({
+      data: resList.map((b) => ({
+        fintechUseNum: b.fintech_use_num,
+        userId: userDetail.id,
+        bankName: b.bank_name,
+        alias: b.account_alias,
+        bankNumberMasked: b.account_num_masked,
+        ownerName: b.account_holder_type
+      })),
+      skipDuplicates: true
+    });
     for (const bankData of resList) {
       await prisma.bank.create({
         data: {
