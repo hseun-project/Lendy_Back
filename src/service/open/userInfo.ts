@@ -7,17 +7,17 @@ import { REDIS_KEY } from '../../types';
 export const userInfo = async (code: string) => {
   const testUrl = process.env.OPEN_API_TEST_URL;
   if (!testUrl) {
-    throw Error('openApiUrl is not found');
+    throw Error('OPNE_API_TEST_URL is not found');
   }
   try {
     const userDetail = await prisma.userDetail.findFirst({ where: { userCode: code } });
     if (!userDetail) {
-      throw Error('userDetail is not Found');
+      throw Error('userDetail is not found');
     }
     const url = `${testUrl}/v2.0/user/me?user_seq_no=${userDetail?.userSeqNo}`;
     const token = await redis.get(`${REDIS_KEY.OPEN_ACCESS_TOKEN} ${userDetail.id}`);
     if (!token) {
-      throw Error('토큰 없음');
+      throw Error('Token is not found');
     }
 
     const res = await axios.get(url, {
@@ -49,6 +49,7 @@ export const userInfo = async (code: string) => {
       skipDuplicates: true
     });
   } catch (err) {
+    console.error(err);
     throw err;
   }
 };

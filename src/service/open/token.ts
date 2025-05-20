@@ -103,6 +103,7 @@ export const refresh = async (refreshToken: string) => {
     await redis.set(`${REDIS_KEY.OPEN_ACCESS_TOKEN} ${userDetail.id}`, access_token, 'EX', expires_in);
     await redis.set(`${REDIS_KEY.OPEN_REFRESH_TOKEN} ${userDetail.id}`, refresh_token, 'EX', expires_in + 10000);
   } catch (err) {
+    console.error(err);
     throw Error('refresh Failed');
   }
 };
