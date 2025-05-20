@@ -1,22 +1,13 @@
 import { Response } from 'express';
-import { BasicResponse } from '../../types';
+import { BasicResponse, REDIS_KEY } from '../../types';
 import { AuthenticatedRequest, TokenResponse } from '../../types/auth';
-import { signJWT } from '../../utils/jwt';
 import redis from '../../config/redis';
-
-export const generateToken = (id: string, isAccess: boolean) => {
-  const token = signJWT(
-    {
-      id,
-      type: isAccess ? 'access' : 'refresh',
-      iat: Math.floor(Date.now() / 1000)
-    },
-    isAccess ? '1h' : '7d'
-  );
-  return token;
-};
+import { generateToken } from '../../utils/jwt';
+import crypto from 'crypto';
 
 export const refresh = async (req: AuthenticatedRequest, res: Response<TokenResponse | BasicResponse>) => {
+  const accessTokenSecond = Number(process.env.ACCESS_TOKEN_SECOND) || 3600;
+
   try {
     const payload = req.payload;
     if (!payload) {
@@ -29,22 +20,24 @@ export const refresh = async (req: AuthenticatedRequest, res: Response<TokenResp
         message: 'refresh token이 아닙니다'
       });
     }
-    const authorization = req.get('Authorization');
-    if (!authorization) {
-      return res.status(400).json({
-        message: '확인할 수 없는 토큰'
-      });
-    }
-    const token = authorization.split(' ')[1];
-    const value = await redis.get(`refresh ${token}`);
-    if (!value) {
+
+    const userId = payload.sub;
+    if (!userId) {
       return res.status(400).json({
         message: '만료되었거나 확인할 수 없는 토큰'
       });
     }
 
-    const accessToken = await generateToken(value, true);
-    await redis.set(value, accessToken, 'EX', 3600);
+    const authorization = req.get('Authorization');
+    if (!authorization) {
+      return res.status(400).json({
+        message: '만료되었거나 확인할 수 없는 토큰'
+      });
+    }
+    const token = authorization.split(' ')[1];
+
+    const accessToken = await generateToken(userId, crypto.randomUUID(), true);
+    await redis.set(`${REDIS_KEY.ACCESS_TOKEN} ${userId}`, accessToken, 'EX', accessTokenSecond);
 
     return res.status(200).json({
       accessToken: accessToken,

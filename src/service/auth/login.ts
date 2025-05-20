@@ -3,13 +3,15 @@ import { prisma } from '../../config/prisma';
 import bcrypt from 'bcrypt';
 import redis from '../../config/redis';
 import { TokenResponse, SignRequest } from '../../types/auth';
-import { generateToken } from './token';
 import crypto from 'crypto';
-import { BasicResponse } from '../../types';
+import { BasicResponse, REDIS_KEY } from '../../types';
+import { generateToken } from '../../utils/jwt';
 
 export const login = async (req: Request<{}, {}, SignRequest>, res: Response<TokenResponse | BasicResponse>) => {
   try {
     const { email, password } = req.body;
+    const accessTokenSecond = Number(process.env.ACCESS_TOKEN_SECOND) || 3600;
+    const refreshTokenSecond = Number(process.env.REFRESH_TOKEN_SECOND) || 604800;
 
     const thisUser = await prisma.user.findUnique({ where: { email } });
     if (!thisUser) {
@@ -23,11 +25,11 @@ export const login = async (req: Request<{}, {}, SignRequest>, res: Response<Tok
       });
     }
 
-    const accessToken = generateToken(thisUser.id.toString(), true);
-    const refreshToken = generateToken(crypto.randomUUID(), false);
+    const accessToken = generateToken(thisUser.id.toString(), crypto.randomUUID(), true);
+    const refreshToken = generateToken(crypto.randomUUID(), thisUser.id.toString(), false);
 
-    await redis.set(thisUser.id.toString(), accessToken, 'EX', 3600);
-    await redis.set(`refresh ${refreshToken}`, thisUser.id.toString(), 'EX', 604800);
+    await redis.set(`${REDIS_KEY.ACCESS_TOKEN} ${thisUser.id}`, accessToken, 'EX', accessTokenSecond);
+    await redis.set(`${REDIS_KEY.REFRESH_TOKEN} ${thisUser.id}`, refreshToken, 'EX', refreshTokenSecond);
 
     return res.status(200).json({
       accessToken,

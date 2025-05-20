@@ -40,10 +40,10 @@ model User {
 
 model UserDetail {
   id        BigInt  @id
-  userCode  String
+  userCode  String  @unique
   userName  String? @db.VarChar(6)
-  userSeqNo String? @db.VarChar(10)
-  apiTranId String? @db.VarChar(40)
+  userSeqNo String? @db.VarChar(10) @unique
+  apiTranId String? @db.VarChar(40) @unique
 
   user      User    @relation(fields: [id], references: [id])
 }
