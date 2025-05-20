@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import auth from '../service/auth';
 import { postApiLimit } from '../middleware/limit';
 import { verifyJWT } from '../middleware/jwt';
+import { AuthenticatedRequest } from '../types';
 
 const app = express.Router();
 
@@ -11,10 +12,10 @@ app.post('/signup', postApiLimit, (req: Request, res: Response) => {
 app.post('/login', postApiLimit, (req: Request, res: Response) => {
   auth.login(req, res);
 });
-app.post('/refresh', postApiLimit, verifyJWT, (req: Request, res: Response) => {
+app.post('/refresh', postApiLimit, verifyJWT, (req: AuthenticatedRequest, res: Response) => {
   auth.refresh(req, res);
 });
-app.post('/logout', postApiLimit, verifyJWT, (req: Request, res: Response) => {
+app.post('/logout', postApiLimit, verifyJWT, (req: AuthenticatedRequest, res: Response) => {
   auth.logout(req, res);
 });
 

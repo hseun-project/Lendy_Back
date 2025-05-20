@@ -10,10 +10,6 @@ export interface TokenResponse {
   refreshToken: string;
 }
 
-export interface AuthenticatedRequest extends Request {
-  payload?: JwtPayloadData;
-}
-
 export interface JwtPayloadData {
   id: string;
   sub: string;

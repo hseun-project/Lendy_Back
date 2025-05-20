@@ -1,7 +1,6 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../../types/auth';
 import { prisma } from '../../config/prisma';
-import { BasicResponse } from '../../types';
+import { BasicResponse, AuthenticatedRequest } from '../../types';
 import { MyApplyLoanData } from '../../types/user';
 
 export const myApplyLoan = async (req: AuthenticatedRequest, res: Response<MyApplyLoanData[] | BasicResponse>) => {

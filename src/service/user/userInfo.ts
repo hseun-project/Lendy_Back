@@ -1,7 +1,6 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../../types/auth';
 import { prisma } from '../../config/prisma';
-import { BasicResponse } from '../../types';
+import { BasicResponse, AuthenticatedRequest } from '../../types';
 import { UserInfoResponse } from '../../types/user';
 
 export const userInfo = async (req: AuthenticatedRequest, res: Response<UserInfoResponse | BasicResponse>) => {
