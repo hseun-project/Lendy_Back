@@ -11,7 +11,7 @@ export const login = async (req: Request<{}, {}, SignRequest>, res: Response<Tok
   try {
     const { email, password } = req.body;
     const accessTokenSecond = Number(process.env.ACCESS_TOKEN_SECOND) || 3600;
-    const refreshTokenSecond = Number(process.env.REFRESH_TOKEN_SECOND) || 6048000;
+    const refreshTokenSecond = Number(process.env.REFRESH_TOKEN_SECOND) || 604800;
 
     const thisUser = await prisma.user.findUnique({ where: { email } });
     if (!thisUser) {
