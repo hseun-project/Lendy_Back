@@ -14,6 +14,12 @@ export const userInfo = async (req: AuthenticatedRequest, res: Response<UserInfo
     }
 
     const userId = Number(payload.id);
+    if (isNaN(userId)) {
+      return res.status(400).json({
+        message: '잘못된 사용자 ID 형식'
+      });
+    }
+
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
