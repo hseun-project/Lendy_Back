@@ -7,7 +7,7 @@ import crypto from 'crypto';
 
 export const refresh = async (req: AuthenticatedRequest, res: Response<TokenResponse | BasicResponse>) => {
   const accessTokenSecond = Number(process.env.ACCESS_TOKEN_SECOND) || 3600;
-  const refreshTokenSecond = Number(process.env.REFRESH_TOKEN_SECOND) || 604800;
+
   try {
     const payload = req.payload;
     if (!payload) {
@@ -28,14 +28,20 @@ export const refresh = async (req: AuthenticatedRequest, res: Response<TokenResp
       });
     }
 
+    const authorization = req.get('Authorization');
+    if (!authorization) {
+      return res.status(400).json({
+        message: '만료되었거나 확인할 수 없는 토큰'
+      });
+    }
+    const token = authorization.split(' ')[1];
+
     const accessToken = await generateToken(userId, crypto.randomUUID(), true);
-    const refreshToken = await generateToken(crypto.randomUUID(), userId, false);
     await redis.set(`access ${userId}`, accessToken, 'EX', accessTokenSecond);
-    await redis.set(`refresh ${userId}`, refreshToken, 'EX', refreshTokenSecond);
 
     return res.status(200).json({
       accessToken: accessToken,
-      refreshToken: refreshToken
+      refreshToken: token
     });
   } catch (err) {
     console.error(err);
