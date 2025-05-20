@@ -38,8 +38,7 @@ export const userToken = async (userCode: string) => {
     await redis.set(`openAccess ${userDetail.id}`, access_token, 'EX', expires_in);
     await redis.set(`openRefresh ${userDetail.id}`, refresh_token, 'EX', expires_in + 10000);
   } catch (err) {
-    console.error(err);
-    return;
+    throw Error('userToken failed');
   }
 };
 
@@ -68,8 +67,7 @@ export const oddToken = async () => {
     await redis.set('lendy', client_use_code, 'EX', expires_in);
     await redis.set(client_use_code, access_token, 'EX', expires_in);
   } catch (err) {
-    console.error(err);
-    return;
+    throw Error('oddToken Failed');
   }
 };
 
@@ -90,14 +88,12 @@ export const refresh = async (refreshToken: string) => {
 
     const userDetail = await prisma.userDetail.findUnique({ where: { userSeqNo: user_seq_no } });
     if (!userDetail) {
-      console.error('userDetail not found');
-      return;
+      throw Error('UserDetail is not Found');
     }
 
     await redis.set(`openAccess ${userDetail.id}`, access_token, 'EX', expires_in);
     await redis.set(`openRefresh ${userDetail.id}`, refresh_token, 'EX', expires_in + 10000);
   } catch (err) {
-    console.error(err);
-    return;
+    throw Error('refresh Failed');
   }
 };

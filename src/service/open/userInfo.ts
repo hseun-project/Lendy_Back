@@ -6,12 +6,12 @@ import { BankData } from '../../types/open';
 export const userInfo = async (code: string) => {
   const testUrl = process.env.OPEN_API_TEST_URL;
   if (!testUrl) {
-    return;
+    throw Error('openApiUrl is not found');
   }
   try {
     const userDetail = await prisma.userDetail.findFirst({ where: { userCode: code } });
     if (!userDetail) {
-      return;
+      throw Error('userDetail is not Found');
     }
     const url = `${testUrl}/v2.0/user/me?user_seq_no=${userDetail?.userSeqNo}`;
     const token = await redis.get(`openAccess ${userDetail.id}`);
@@ -57,7 +57,6 @@ export const userInfo = async (code: string) => {
       });
     }
   } catch (err) {
-    console.error(err);
-    return;
+    throw err;
   }
 };
