@@ -5,10 +5,10 @@ import { BasicResponse } from '../../types';
 import { IdentificationUrlResponse } from '../../types/auth';
 
 export const identificationUrl = async (req: Request, res: Response<IdentificationUrlResponse | BasicResponse>) => {
-  const clientId = process.env.OPEN_API_CLIENT_I;
+  const clientId = process.env.OPEN_API_CLIENT_ID;
   const redirectionUrl = process.env.OPEN_API_REDIRECTION_URL;
   const openApiTestUrl = process.env.OPEN_API_TEST_URL;
-  if (clientId || redirectionUrl || openApiTestUrl) {
+  if (!clientId || !redirectionUrl || !openApiTestUrl) {
     return res.status(500).json({
       message: 'not defined env'
     });
