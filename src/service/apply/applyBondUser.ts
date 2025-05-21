@@ -15,7 +15,12 @@ export const applyBondUser = async (req: AuthenticatedRequest<{}, ApplyUserQuery
       });
     }
 
-    const numOffset = Math.max(offset || 1, 0);
+    const numericOffset = Number(offset || 1);
+    if (isNaN(numericOffset) || numericOffset < 1) {
+      return res.status(400).json({
+        message: '올바르지 않은 페이지 번호'
+      });
+    }
 
     const bondUsers = await prisma.user.findMany({
       select: {
@@ -41,7 +46,7 @@ export const applyBondUser = async (req: AuthenticatedRequest<{}, ApplyUserQuery
         ]
       },
       take: PAGE_SIZE,
-      skip: PAGE_SIZE * (numOffset - 1),
+      skip: PAGE_SIZE * (numericOffset - 1),
       orderBy: [{ email: 'asc' }, { userDetail: { userName: 'asc' } }]
     });
 
@@ -51,7 +56,7 @@ export const applyBondUser = async (req: AuthenticatedRequest<{}, ApplyUserQuery
     }));
 
     return res.status(200).json({
-      offset: numOffset,
+      offset: numericOffset,
       users: result
     });
   } catch (err) {
