@@ -12,8 +12,8 @@ export interface JwtPayloadData {
   iat: number;
 }
 
-export interface AuthenticatedRequest<Params = Record<string, never>, Query = ParsedQs, Body = Record<string, never>>
-  extends Request<Params, any, Body, Query> {
+export interface AuthenticatedRequest<Params = Record<string, never>, Query = ParsedQs, Body = Record<string, never>, ResBody = any>
+  extends Request<Params, ResBody, Body, Query> {
   payload?: JwtPayloadData;
   userId?: number;
 }
