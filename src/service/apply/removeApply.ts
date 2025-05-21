@@ -25,14 +25,14 @@ export const removeApply = async (req: AuthenticatedRequest, res: Response<Basic
       });
     }
 
-    const applyLoan = await prisma.applyLoan.findUnique({ where: { id: applyLoanId } });
+    const applyLoan = await prisma.applyLoan.findUnique({ where: { id: applyLoanId, debtId: userId } });
     if (!applyLoan) {
       return res.status(404).json({
         message: '존재하지 않는 대출 요청'
       });
     }
 
-    await prisma.applyLoan.delete({ where: { id: applyLoanId } });
+    await prisma.applyLoan.delete({ where: { id: applyLoanId, debtId: userId } });
 
     return res.status(204).end();
   } catch (err) {
