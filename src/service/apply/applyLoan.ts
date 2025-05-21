@@ -34,7 +34,8 @@ export const applyLoan = async (req: AuthenticatedRequest<{}, {}, ApplyLoanReque
       });
     }
 
-    const totalMoney = (await (await prisma.applyLoan.aggregate({ where: { debtId: userId }, _sum: { money: true } }))._sum.money) ?? 0;
+    const aggregateResult = await prisma.applyLoan.aggregate({ where: { debtId: userId }, _sum: { money: true } });
+    const totalMoney = aggregateResult._sum.money || 0;
     if (totalMoney + money > 1000000) {
       return res.status(400).json({
         message: '최대 대출 한도 초과'
