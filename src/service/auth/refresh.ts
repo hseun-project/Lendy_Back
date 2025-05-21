@@ -36,7 +36,7 @@ export const refresh = async (req: AuthenticatedRequest, res: Response<TokenResp
     }
     const token = authorization.split(' ')[1];
 
-    const accessToken = await generateToken(userId, crypto.randomUUID(), true);
+    const accessToken = generateToken(userId, crypto.randomUUID(), true);
     await redis.set(`${REDIS_KEY.ACCESS_TOKEN} ${userId}`, accessToken, 'EX', accessTokenSecond);
 
     return res.status(200).json({
