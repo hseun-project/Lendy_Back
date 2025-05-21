@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { AuthenticatedRequest, JwtPayloadData } from '../types/auth';
+import { AuthenticatedRequest, JwtPayloadData } from '../types';
 
 export const verifyJWT = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   try {
@@ -21,6 +21,17 @@ export const verifyJWT = (req: AuthenticatedRequest, res: Response, next: NextFu
     const token = authorization.split(' ')[1];
     const decoded = jwt.verify(token, privateKey) as JwtPayloadData;
     req.payload = decoded;
+
+    if (decoded.type === 'access') {
+      const userId = Number(decoded.id);
+      if (isNaN(userId)) {
+        res.status(400).json({
+          message: '토큰 검증 실패'
+        });
+        return;
+      }
+      req.userId = userId;
+    }
 
     next();
   } catch (err) {

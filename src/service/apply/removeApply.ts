@@ -4,15 +4,8 @@ import { prisma } from '../../config/prisma';
 
 export const removeApply = async (req: AuthenticatedRequest, res: Response<BasicResponse>) => {
   try {
-    const payload = req.payload;
-    if (!payload || payload.type !== 'access') {
-      return res.status(400).json({
-        message: '토큰 검증 실패'
-      });
-    }
-
-    const userId = Number(payload.id);
-    if (isNaN(userId)) {
+    const userId = req.userId;
+    if (!userId) {
       return res.status(400).json({
         message: '토큰 검증 실패'
       });

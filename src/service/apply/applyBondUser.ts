@@ -8,20 +8,6 @@ const DEFAULT_USER_NAME = '무명';
 
 export const applyBondUser = async (req: AuthenticatedRequest<{}, ApplyUserQuery, {}>, res: Response<ApplyBondUserResponse | BasicResponse>) => {
   try {
-    const payload = req.payload;
-    if (!payload || payload.type !== 'access') {
-      return res.status(400).json({
-        message: '토큰 검증 실패'
-      });
-    }
-
-    const userId = Number(payload.id);
-    if (isNaN(userId)) {
-      return res.status(400).json({
-        message: '토큰 검증 실패'
-      });
-    }
-
     const { keyword, offset } = req.query;
     if (!keyword) {
       return res.status(400).json({

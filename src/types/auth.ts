@@ -10,13 +10,6 @@ export interface TokenResponse {
   refreshToken: string;
 }
 
-export interface JwtPayloadData {
-  id: string;
-  sub: string;
-  type: 'access' | 'refresh';
-  iat: number;
-}
-
 export interface IdentificationUrlResponse {
   url: string;
 }
