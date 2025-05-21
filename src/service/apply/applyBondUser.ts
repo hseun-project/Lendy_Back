@@ -3,9 +3,10 @@ import { Response } from 'express';
 import { ApplyBondUserData, ApplyUserQuery, ApplyBondUserResponse } from '../../types/apply';
 import { prisma } from '../../config/prisma';
 
-export const applyBondUser = async (req: AuthenticatedRequest<{}, ApplyUserQuery, {}>, res: Response<ApplyBondUserResponse | BasicResponse>) => {
-  const pageSize = 10;
+const PAGE_SIZE = 10;
+const DEFAULT_USER_NAME = '무명';
 
+export const applyBondUser = async (req: AuthenticatedRequest<{}, ApplyUserQuery, {}>, res: Response<ApplyBondUserResponse | BasicResponse>) => {
   try {
     const payload = req.payload;
     if (!payload || payload.type !== 'access') {
@@ -51,13 +52,13 @@ export const applyBondUser = async (req: AuthenticatedRequest<{}, ApplyUserQuery
           }
         ]
       },
-      take: pageSize,
-      skip: pageSize * Math.max((offset || 1) - 1, 0),
+      take: PAGE_SIZE,
+      skip: PAGE_SIZE * Math.max((offset || 1) - 1, 0),
       orderBy: [{ email: 'asc' }, { userDetail: { userName: 'asc' } }]
     });
 
     const result: ApplyBondUserData[] = bondUsers.map((user) => ({
-      name: user.userDetail?.userName || '무명',
+      name: user.userDetail?.userName || DEFAULT_USER_NAME,
       email: user.email
     }));
 
