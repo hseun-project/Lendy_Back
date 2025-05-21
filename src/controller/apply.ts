@@ -17,4 +17,4 @@ app.delete('/:applyLoanId', apiLimit, verifyJWT, (req: AuthenticatedRequest, res
   apply.removeApply(req, res);
 });
 
-export default apiLimit;
+export default app;
