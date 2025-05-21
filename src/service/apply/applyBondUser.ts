@@ -15,6 +15,8 @@ export const applyBondUser = async (req: AuthenticatedRequest<{}, ApplyUserQuery
       });
     }
 
+    const numOffset = Math.max(offset || 1, 0);
+
     const bondUsers = await prisma.user.findMany({
       select: {
         email: true,
@@ -39,7 +41,7 @@ export const applyBondUser = async (req: AuthenticatedRequest<{}, ApplyUserQuery
         ]
       },
       take: PAGE_SIZE,
-      skip: PAGE_SIZE * Math.max((offset || 1) - 1, 0),
+      skip: PAGE_SIZE * (numOffset - 1),
       orderBy: [{ email: 'asc' }, { userDetail: { userName: 'asc' } }]
     });
 
@@ -49,7 +51,7 @@ export const applyBondUser = async (req: AuthenticatedRequest<{}, ApplyUserQuery
     }));
 
     return res.status(200).json({
-      offset: offset || 1,
+      offset: numOffset,
       users: result
     });
   } catch (err) {
