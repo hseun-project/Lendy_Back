@@ -34,9 +34,7 @@ export const removeApply = async (req: AuthenticatedRequest, res: Response<Basic
 
     await prisma.applyLoan.delete({ where: { id: applyLoanId } });
 
-    return res.status(204).json({
-      message: '대출 요청 삭제 성공'
-    });
+    return res.status(204).end();
   } catch (err) {
     console.error(err);
     return res.status(500).json({
