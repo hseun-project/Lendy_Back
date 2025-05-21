@@ -12,11 +12,6 @@ if (!clientId || !redirectionUrl || !openApiTestUrl) {
 }
 
 export const identificationUrl = async (req: Request, res: Response<IdentificationUrlResponse | BasicResponse>) => {
-  if (!clientId || !redirectionUrl || !openApiTestUrl) {
-    return res.status(500).json({
-      message: 'not defined env'
-    });
-  }
   let state = crypto.randomBytes(16).toString('hex');
   state = BigInt('0x' + state)
     .toString()
