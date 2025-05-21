@@ -20,13 +20,15 @@ export const applyLoan = async (req: AuthenticatedRequest<{}, {}, ApplyLoanReque
     }
 
     const { loanType, money, interest, duringType, during, bondEmail } = req.body;
-    if (!loanType || !money || !interest || !duringType || !during) {
+    if (!loanType || !money || !interest || !duringType || !during || money <= 0 || during <= 0) {
       return res.status(400).json({
         message: '올바르지 않은 입력값'
       });
     }
 
-    if (parseFloat(interest) > 20) {
+    const interestValue = parseFloat(interest);
+
+    if (isNaN(interestValue) || interestValue > 20) {
       return res.status(400).json({
         message: '최대 이자율 초과'
       });
@@ -53,7 +55,7 @@ export const applyLoan = async (req: AuthenticatedRequest<{}, {}, ApplyLoanReque
         debtApply: { connect: { id: userId } },
         loanType: loanType,
         money: money,
-        interest: parseFloat(interest),
+        interest: interestValue,
         duringType: duringType,
         during: during,
         ...(bondUser && { bondApply: { connect: { id: bondUser.id } } })
