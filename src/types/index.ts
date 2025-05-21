@@ -1,5 +1,21 @@
+import { Request } from 'express';
+import { ParsedQs } from 'qs';
+
 export interface BasicResponse {
   message: string;
+}
+
+export interface JwtPayloadData {
+  id: string;
+  sub: string;
+  type: 'access' | 'refresh';
+  iat: number;
+}
+
+export interface AuthenticatedRequest<Params = Record<string, never>, Query = ParsedQs, Body = Record<string, never>, ResBody = any>
+  extends Request<Params, ResBody, Body, Query> {
+  payload?: JwtPayloadData;
+  userId?: number;
 }
 
 export const REDIS_KEY = {

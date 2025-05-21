@@ -4,15 +4,14 @@ import crypto from 'crypto';
 import { BasicResponse } from '../../types';
 import { IdentificationUrlResponse } from '../../types/auth';
 
+const clientId = process.env.OPEN_API_CLIENT_ID;
+const redirectionUrl = process.env.OPEN_API_REDIRECTION_URL;
+const openApiTestUrl = process.env.OPEN_API_TEST_URL;
+if (!clientId || !redirectionUrl || !openApiTestUrl) {
+  throw Error('env 변수 불러오기 실패');
+}
+
 export const identificationUrl = async (req: Request, res: Response<IdentificationUrlResponse | BasicResponse>) => {
-  const clientId = process.env.OPEN_API_CLIENT_ID;
-  const redirectionUrl = process.env.OPEN_API_REDIRECTION_URL;
-  const openApiTestUrl = process.env.OPEN_API_TEST_URL;
-  if (!clientId || !redirectionUrl || !openApiTestUrl) {
-    return res.status(500).json({
-      message: 'not defined env'
-    });
-  }
   let state = crypto.randomBytes(16).toString('hex');
   state = BigInt('0x' + state)
     .toString()

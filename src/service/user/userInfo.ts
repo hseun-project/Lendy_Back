@@ -1,22 +1,14 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../../types/auth';
 import { prisma } from '../../config/prisma';
-import { BasicResponse } from '../../types';
+import { BasicResponse, AuthenticatedRequest } from '../../types';
 import { UserInfoResponse } from '../../types/user';
 
 export const userInfo = async (req: AuthenticatedRequest, res: Response<UserInfoResponse | BasicResponse>) => {
   try {
-    const payload = req.payload;
-    if (!payload || payload.type !== 'access') {
+    const userId = req.userId;
+    if (!userId) {
       return res.status(400).json({
         message: '토큰 검증 실패'
-      });
-    }
-
-    const userId = Number(payload.id);
-    if (isNaN(userId)) {
-      return res.status(400).json({
-        message: '잘못된 사용자 ID 형식'
       });
     }
 
