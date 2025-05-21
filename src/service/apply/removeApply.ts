@@ -1,0 +1,46 @@
+import { AuthenticatedRequest, BasicResponse } from '../../types';
+import { Response } from 'express';
+import { prisma } from '../../config/prisma';
+
+export const removeApply = async (req: AuthenticatedRequest, res: Response<BasicResponse>) => {
+  try {
+    const payload = req.payload;
+    if (!payload || payload.type !== 'access') {
+      return res.status(400).json({
+        message: '토큰 검증 실패'
+      });
+    }
+
+    const userId = Number(payload.id);
+    if (isNaN(userId)) {
+      return res.status(400).json({
+        message: '토큰 검증 실패'
+      });
+    }
+
+    const applyLoanId = req.params.applyLoanId;
+    if (!applyLoanId) {
+      return res.status(400).json({
+        message: '올바르지 않은 입력값'
+      });
+    }
+
+    const applyLoan = await prisma.applyLoan.findUnique({ where: { id: applyLoanId } });
+    if (!applyLoan) {
+      return res.status(404).json({
+        message: '존재하지 않는 대출 요청'
+      });
+    }
+
+    await prisma.applyLoan.delete({ where: { id: applyLoanId } });
+
+    return res.status(204).json({
+      message: '대출 요청 삭제 성공'
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: '서버 에러 발생'
+    });
+  }
+};

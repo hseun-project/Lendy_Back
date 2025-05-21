@@ -13,3 +13,8 @@ app.post('/', apiLimit, verifyJWT, (req: AuthenticatedRequest<{}, {}, ApplyLoanR
 app.get('/bond', getApiLimit, verifyJWT, (req: AuthenticatedRequest, res: Response) => {
   apply.applyBondUser(req, res);
 });
+app.delete('/:applyLoanId', apiLimit, verifyJWT, (req: AuthenticatedRequest, res: Response) => {
+  apply.removeApply(req, res);
+});
+
+export default apiLimit;
