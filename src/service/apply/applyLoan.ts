@@ -26,6 +26,21 @@ export const applyLoan = async (req: AuthenticatedRequest<{}, {}, ApplyLoanReque
       });
     }
 
+    if (parseFloat(interest) > 20) {
+      return res.status(400).json({
+        message: '최대 이자율 초과'
+      });
+    }
+
+    const totalMoney = (await (await prisma.applyLoan.aggregate({ where: { debtId: userId }, _sum: { money: true } }))._sum.money) ?? 0;
+    if (totalMoney + money > 1000000) {
+      return res.status(400).json({
+        message: '최대 대출 한도 초과'
+      });
+    }
+
+    // 상환이 완료되지 않은 대출이 있음에도 신청을 헀다면 신용점수 down
+
     const bondUser = bondEmail ? await prisma.user.findUnique({ where: { email: bondEmail } }) : undefined;
     if (loanType === 'PRIVATE_LOAN' && !bondUser) {
       return res.status(404).json({
