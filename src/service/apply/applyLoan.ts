@@ -29,7 +29,7 @@ export const applyLoan = async (req: AuthenticatedRequest<{}, {}, ApplyLoanReque
     const bondUser = bondEmail ? await prisma.user.findUnique({ where: { email: bondEmail } }) : undefined;
     if (loanType === 'PRIVATE_LOAN' && !bondUser) {
       return res.status(404).json({
-        message: '개인 대출 요청 대상 존재하지 않는 사용지'
+        message: '개인 대출 요청 대상 존재하지 않는 사용자'
       });
     }
 
