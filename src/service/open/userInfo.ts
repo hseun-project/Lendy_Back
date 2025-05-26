@@ -48,6 +48,17 @@ export const userInfo = async (code: string) => {
       })),
       skipDuplicates: true
     });
+
+    const firstBank = await prisma.bank.findFirst({
+      where: { userId: userDetail.id },
+      orderBy: { id: 'asc' }
+    });
+    if (firstBank) {
+      await prisma.userDetail.update({
+        where: { id: userDetail.id },
+        data: { bank: { connect: { id: firstBank.id } } }
+      });
+    }
   } catch (err) {
     console.error(err);
     throw err;

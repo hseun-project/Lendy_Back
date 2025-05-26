@@ -40,16 +40,19 @@ model User {
 
 model UserDetail {
   id        BigInt  @id
+  bankId    BigInt? @unique
   userCode  String  @unique
   userName  String? @db.VarChar(6)
   userSeqNo String? @db.VarChar(10) @unique
   apiTranId String? @db.VarChar(40) @unique
 
   user      User    @relation(fields: [id], references: [id])
+  bank      Bank?   @relation(fields: [bankId], references: [id])
 }
 
 model Bank {
-  fintechUseNum    String  @id
+  id               BigInt  @id @default(autoincrement())
+  fintechUseNum    String  @unique
   userId           BigInt  @db.BigInt
   bankName         String  @db.VarChar(20)
   bankNumber       String? @db.VarChar(16)
@@ -58,6 +61,7 @@ model Bank {
   ownerName        String  @db.VarChar(20)
 
   user             User    @relation(fields: [userId], references: [id])
+  userDetail       UserDetail?
 }
 
 model ApplyLoan {
