@@ -15,7 +15,7 @@ export interface JwtPayloadData {
 export interface AuthenticatedRequest<Params = Record<string, never>, Query = ParsedQs, Body = Record<string, never>, ResBody = any>
   extends Request<Params, ResBody, Body, Query> {
   payload?: JwtPayloadData;
-  userId?: number;
+  userId?: bigint;
 }
 
 export const REDIS_KEY = {
