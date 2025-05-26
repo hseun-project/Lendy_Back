@@ -19,7 +19,7 @@ export const requestLoanList = async (req: AuthenticatedRequest, res: Response<R
     const loanType = req.params.loanType;
     if (loanType !== LoanType.PRIVATE_LOAN || loanType !== LoanType.PUBLIC_LOAN) {
       return res.status(400).json({
-        message: '올바르지 않은 params'
+        message: '올바르지 않은 파라미터'
       });
     }
 
