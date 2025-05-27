@@ -1,6 +1,6 @@
 import express, { Response } from 'express';
 import { AuthenticatedRequest } from '../types';
-import { getApiLimit } from '../middleware/limit';
+import { apiLimit, getApiLimit } from '../middleware/limit';
 import { verifyJWT } from '../middleware/jwt';
 import request from '../service/request';
 
@@ -11,6 +11,9 @@ app.get('/list/:loanType', getApiLimit, verifyJWT, (req: AuthenticatedRequest, r
 });
 app.get('/:applyLoanId', getApiLimit, verifyJWT, (req: AuthenticatedRequest, res: Response) => {
   request.requestLoan(req, res);
+});
+app.patch('/:applyLoanId', apiLimit, verifyJWT, (req: AuthenticatedRequest, res: Response) => {
+  request.changeState(req, res);
 });
 
 export default app;
