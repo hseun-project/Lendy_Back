@@ -1,6 +1,6 @@
 import { AuthenticatedRequest, BasicResponse } from '../../types';
 import { Response } from 'express';
-import { DuringType, prisma } from '../../config/prisma';
+import { prisma } from '../../config/prisma';
 import { RequestLoanResponse } from '../../types/request';
 
 export const requestLoan = async (req: AuthenticatedRequest, res: Response<RequestLoanResponse | BasicResponse>) => {
@@ -8,7 +8,7 @@ export const requestLoan = async (req: AuthenticatedRequest, res: Response<Reque
     const applyLoanId = req.params.applyLoanId;
     if (!applyLoanId) {
       return res.status(400).json({
-        message: '올바르지 않은 파라미터터'
+        message: '올바르지 않은 파라미터'
       });
     }
 
