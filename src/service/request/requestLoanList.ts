@@ -45,7 +45,7 @@ export const requestLoanList = async (req: AuthenticatedRequest, res: Response<R
           during: true
         },
         where: where,
-        skip: PAGE_SIZE * Math.max(Number(offset) - 1, 0),
+        skip: PAGE_SIZE * Math.max((Number(offset) || 1) - 1, 0),
         take: PAGE_SIZE
       }),
       prisma.applyLoan.count({
