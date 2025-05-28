@@ -32,20 +32,22 @@ export const changeState = async (req: AuthenticatedRequest, res: Response<Basic
       });
     }
 
-    await prisma.applyLoan.update({ where: { id: applyLoanId }, data: { state: state } });
+    await prisma.$transaction(async (tx) => {
+      await tx.applyLoan.update({ where: { id: applyLoanId }, data: { state: state } });
 
-    if (state === ApplyLoanState.APPROVAL) {
-      await prisma.loan.create({
-        data: {
-          debtId: applyLoan.debtId,
-          bondId: userId,
-          money: applyLoan.money,
-          interest: applyLoan.interest,
-          duringType: applyLoan.duringType,
-          during: applyLoan.during
-        }
-      });
-    }
+      if (state === ApplyLoanState.APPROVAL) {
+        await prisma.loan.create({
+          data: {
+            debtId: applyLoan.debtId,
+            bondId: userId,
+            money: applyLoan.money,
+            interest: applyLoan.interest,
+            duringType: applyLoan.duringType,
+            during: applyLoan.during
+          }
+        });
+      }
+    });
 
     return res.status(200).json({
       message: `대출 요청 ${state === ApplyLoanState.APPROVAL ? '승인' : '거절'} 완료`
