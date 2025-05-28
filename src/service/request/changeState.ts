@@ -19,7 +19,7 @@ export const changeState = async (req: AuthenticatedRequest, res: Response<Basic
     }
 
     const state = req.body.state;
-    if (state !== ApplyLoanState.APPROVAL || state !== ApplyLoanState.REJECTED) {
+    if (state !== ApplyLoanState.APPROVAL && state !== ApplyLoanState.REJECTED) {
       return res.status(400).json({
         message: '올바르지 않은 요청'
       });
