@@ -35,7 +35,10 @@ export const applyLoan = async (req: AuthenticatedRequest<{}, {}, ApplyLoanReque
       });
     }
 
-    // 상환이 완료되지 않은 대출이 있음에도 신청을 헀다면 신용점수 down
+    const myLoan = await prisma.loan.findFirst({ where: { debtId: userId } });
+    if (myLoan) {
+      // 신용 점수 감소 API 호출
+    }
 
     const bondUser = bondEmail ? await prisma.user.findUnique({ where: { email: bondEmail } }) : undefined;
     if (loanType === 'PRIVATE_LOAN' && !bondUser) {

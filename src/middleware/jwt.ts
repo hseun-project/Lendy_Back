@@ -12,7 +12,7 @@ export const verifyJWT = (req: AuthenticatedRequest, res: Response, next: NextFu
       return;
     }
     const authorization = req.get('Authorization');
-    if (!authorization) {
+    if (!authorization || !authorization.startsWith('Bearer ')) {
       res.status(401).json({
         message: '토큰 유효성 검사 실패'
       });
@@ -20,17 +20,24 @@ export const verifyJWT = (req: AuthenticatedRequest, res: Response, next: NextFu
     }
     const token = authorization.split(' ')[1];
     const decoded = jwt.verify(token, privateKey) as JwtPayloadData;
+    if (!decoded || !decoded.id || !decoded.sub || !decoded.iat || !decoded.type) {
+      res.status(401).json({
+        message: '유효하지 않은 토큰 페이로드'
+      });
+      return;
+    }
     req.payload = decoded;
 
     if (decoded.type === 'access') {
-      const userId = Number(decoded.id);
-      if (isNaN(userId)) {
+      try {
+        const userId = BigInt(decoded.id);
+        req.userId = userId;
+      } catch (err) {
         res.status(400).json({
-          message: '토큰 검증 실패'
+          message: '유효하지 않은 사용자 ID'
         });
         return;
       }
-      req.userId = userId;
     }
 
     next();
