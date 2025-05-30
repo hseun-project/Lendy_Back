@@ -4,6 +4,7 @@ import open from './open';
 import user from './user';
 import apply from './apply';
 import request from './request';
+import repay from './repay';
 
 const app = express();
 
@@ -17,5 +18,6 @@ app.use('/open', open);
 app.use('/user', user);
 app.use('/apply', apply);
 app.use('/request', request);
+app.use('/repay', repay);
 
 export default app;
