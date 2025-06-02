@@ -3,6 +3,7 @@ import redis from '../../config/redis';
 import axios from 'axios';
 import qs from 'qs';
 import { REDIS_KEY } from '../../types';
+import crypto from 'crypto';
 
 const clientId = process.env.OPEN_API_CLIENT_ID;
 const clientSecret = process.env.OPEN_API_SECRET_KEY;
@@ -75,6 +76,9 @@ export const oddToken = async () => {
     const { access_token, expires_in, client_use_code } = res.data;
     await redis.set('lendy', client_use_code, 'EX', expires_in);
     await redis.set(client_use_code, access_token, 'EX', expires_in);
+
+    const bankTranId = `${client_use_code}U${crypto.randomInt.toString().padStart(9, '0')}`;
+    await redis.set('lendy bank_tran_id', bankTranId);
   } catch (err) {
     throw Error('oddToken Failed');
   }

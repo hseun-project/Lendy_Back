@@ -12,5 +12,8 @@ app.get('/', getApiLimit, verifyJWT, (req: AuthenticatedRequest, res: Response) 
 app.get('/:loanId', getApiLimit, verifyJWT, (req: AuthenticatedRequest, res: Response) => {
   repay.repayLoanDetail(req, res);
 });
+app.post('/:loanId', apiLimit, verifyJWT, (req: AuthenticatedRequest, res: Response) => {
+  repay.repayLoan(req, res);
+});
 
 export default app;
